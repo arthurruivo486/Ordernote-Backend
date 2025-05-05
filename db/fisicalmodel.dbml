@@ -1,0 +1,61 @@
+Table users {
+  id integer [primary key, increment]
+  name varchar(255) [not null]
+  email varchar(255) [not null, unique]
+  password_hash varchar(255) [not null]
+  role varchar(50) [default: 'seller', note: 'admin/seller']
+  status boolean [default: true]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp
+
+  indexes {
+    (email) [unique, name: 'unique_email']
+    (email, password_hash) [name: 'login']
+    (name) [name: 'search_by_name']
+  }
+}
+
+Table products {
+  id integer [primary key, increment]
+  name varchar(255) [not null]
+  description text
+  image_url varchar(512) [note: 'optional']
+  is_active boolean [default: true]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp
+
+  indexes {
+    (name) [name: 'search_product_name']
+  }
+}
+
+Table product_variations {
+  id integer [primary key, increment]
+  product_id integer [not null, ref: > products.id]
+  name varchar(255) [not null, note: 'Ex: 500ml, Sabor Laranja']
+  price decimal(10,2) [not null]
+  stock integer [note: 'optional stock control']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp
+
+  indexes {
+    (product_id) [name: 'by_product']
+  }
+}
+
+Table sales {
+  id integer [primary key, increment]
+  order_id integer [not null]
+  customer_id integer [note: 'opcional']
+  user_id integer [not null, ref: > users.id]
+  total_amount decimal(10,2) [not null]
+  payment_method varchar(50) [not null, note: 'cash/card/pix']
+  status varchar(20) [not null, note: 'paid/pending']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp
+
+  indexes {
+    (created_at) [name: 'sales_by_date']
+    (user_id) [name: 'sales_by_user']
+  }
+}
