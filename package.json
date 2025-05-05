@@ -4,7 +4,7 @@
   "descripition": "Backend do aplicativo order note",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "node --watch --experimental-sqlite --trace-warnings src/index.js"
   },
   "repository": {
     "type": "git",
