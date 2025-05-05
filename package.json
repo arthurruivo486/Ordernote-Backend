@@ -1,0 +1,28 @@
+{
+  "name": "ordernote-backend",
+  "version": "1.0.0",
+  "descripition": "Backend do aplicativo order note",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arthurruivo486/Ordernote-Backend.git"
+  },
+  "keywords": [
+    "backend ",
+    "aplicativo",
+    "orderonte"
+  ],
+  "author": "Tech Web inc.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arthurruivo486/Ordernote-Backend/issues"
+  },
+  "homepage": "https://github.com/arthurruivo486/Ordernote-Backend#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
