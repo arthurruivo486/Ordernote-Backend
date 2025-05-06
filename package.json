@@ -4,7 +4,6 @@
   "descripition": "Backend do aplicativo order note",
   "main": "index.js",
   "type": "module",
-
   "scripts": {
     "dev": "node --watch --experimental-sqlite --trace-warnings src/index.js"
   },
@@ -26,6 +25,7 @@
   "description": "",
   "dependencies": {
     "express": "^5.1.0",
+    "knex": "^3.1.0",
     "sqlite3": "^5.1.7"
   }
 }
