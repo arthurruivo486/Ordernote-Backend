@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch --experimental-sqlite --trace-warnings src/index.js"
+    "dev": "node --watch --trace-warnings src/index.js"
   },
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
   "keywords": [
     "backend ",
     "aplicativo",
-    "orderonte"
+    "ordernote"
   ],
   "author": "Tech Web inc.",
   "license": "ISC",
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/arthurruivo486/Ordernote-Backend#readme",
   "description": "",
   "dependencies": {
+    "better-sqlite3": "^11.10.0",
     "express": "^5.1.0",
     "knex": "^3.1.0",
     "sqlite3": "^5.1.7"
