@@ -48,3 +48,17 @@ export async function update(id, userData) {
         throw new Error("Error updating user:" + error.message);
     }
 }
+
+
+
+export async function updateRole(id, role) {
+    try {
+        const query = "UPDATE users SET role=? WHERE id = ?;";
+        const statement = database.prepare(query);
+        const result = statement.run(role, id);
+        return result;
+    } catch (error) {
+        console.log(error);
+        throw new Error("Error updating user:" + error.message);
+    }
+}
