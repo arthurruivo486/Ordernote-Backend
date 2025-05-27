@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-    return knex.schema.createTable('sales', function(table) {
+    return knex.schema.createTable('sale', function(table) {
       table.increments('id').primary(); // id INTEGER PRIMARY KEY AUTOINCREMENT
       table.integer('order_id').notNullable();
       table.integer('customer_id').nullable().comment('opcional');
@@ -15,8 +15,8 @@ export async function up(knex) {
       table.timestamp('updated_at');
   
       // Indexes
-      table.index(['created_at'], 'sales_by_date');
-      table.index(['user_id'], 'sales_by_user');
+      table.index(['created_at'], 'sale_by_date');
+      table.index(['user_id'], 'sale_by_user');
     });
   }
   
@@ -25,6 +25,6 @@ export async function up(knex) {
    * @returns { Promise<void> }
    */
   export async function down(knex) {
-    return knex.schema.dropTable('sales');
+    return knex.schema.dropTable('sale');
   }
   

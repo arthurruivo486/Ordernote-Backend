@@ -43,7 +43,7 @@ Table product_variations {
   }
 }
 
-Table sales {
+Table sale {
   id integer [primary key, increment]
   order_id integer [not null]
   customer_id integer [note: 'opcional']
@@ -55,7 +55,7 @@ Table sales {
   updated_at timestamp
 
   indexes {
-    (created_at) [name: 'sales_by_date']
-    (user_id) [name: 'sales_by_user']
+    (created_at) [name: 'sale_by_date']
+    (user_id) [name: 'sale_by_user']
   }
 }

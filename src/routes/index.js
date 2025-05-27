@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 
 import userRoutes from './userRoutes.js';
-import saleRoutes from './salesRoutes.js';
+import saleRoutes from './saleRoutes.js';
 import productRoutes from './productRoutes.js';
 import product_variationRoutes from './product_variationRoutes.js';
 
