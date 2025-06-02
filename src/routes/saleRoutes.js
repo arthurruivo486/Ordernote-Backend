@@ -1,9 +1,9 @@
-import express from "express";
+import express from 'express';
 const router = express.Router();
 
-import { getsale, createSale, deleteSale, updateSale } from "../controllers/saleController.js";
+import { getSales, createSale, deleteSale, updateSale } from "../controllers/saleController.js";
 
-router.get("/sale", getsale);
+router.get("/sale", getSales);
 router.post("/sale", createSale);
 router.delete("/sale/:id", deleteSale);
 router.patch("/sale/:id", updateSale);

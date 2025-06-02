@@ -4,24 +4,24 @@ export async function findAll() {
     try {
         const query = "SELECT * FROM sales;";
         const statement = database.prepare(query);
-        const sale = statement.all();
-        return sale;
+        const sales = statement.all();
+        return sales;
     } catch (error) {
         console.log(error);
-        throw new Error("Error fetching sale: " + error.message);
+        throw new Error("Error fetching sales: " + error.message);
     }
 }
 
 export async function create(saleData) {
     try {
         const query = `
-            INSERT INTO sale (order_id, customer_id, user_id, total_amount, payment_method, status)
+            INSERT INTO sales (order_id, customer_id, user_id, total_amount, payment_method, status)
             VALUES (?, ?, ?, ?, ?, ?);
         `;
         const statement = database.prepare(query);
         const result = statement.run(
             saleData.order_id,
-            saleData.customer_id,
+            saleData.customer_id ?? null,
             saleData.user_id,
             saleData.total_amount,
             saleData.payment_method,
@@ -36,7 +36,7 @@ export async function create(saleData) {
 
 export async function remove(id) {
     try {
-        const query = "DELETE FROM sale WHERE id = ?;";
+        const query = "DELETE FROM sales WHERE id = ?;";
         const statement = database.prepare(query);
         const result = statement.run(id);
         return result;
@@ -49,14 +49,14 @@ export async function remove(id) {
 export async function update(id, saleData) {
     try {
         const query = `
-            UPDATE sale
-            SET order_id = ?, customer_id = ?, user_id = ?, total_amount = ?, payment_method = ?, status = ?
+            UPDATE sales 
+            SET order_id = ?, customer_id = ?, user_id = ?, total_amount = ?, payment_method = ?, status = ?, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?;
         `;
         const statement = database.prepare(query);
         const result = statement.run(
             saleData.order_id,
-            saleData.customer_id,
+            saleData.customer_id ?? null,
             saleData.user_id,
             saleData.total_amount,
             saleData.payment_method,
