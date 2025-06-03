@@ -1,11 +1,11 @@
 Table users {
-  id integer [primary key, increment]
+  id int [pk, increment]
   name varchar(255) [not null]
   email varchar(255) [not null, unique]
   password_hash varchar(255) [not null]
   role varchar(50) [default: 'seller', note: 'admin/seller']
   status boolean [default: true]
-  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  created_at timestamp [default: `now()`]
   updated_at timestamp
 
   indexes {
@@ -15,27 +15,45 @@ Table users {
   }
 }
 
+Table customers {
+  id int [pk, increment]
+  name varchar(255) [not null]
+  phone varchar(20)
+  address_street varchar(255)
+  address_number varchar(20)
+  address_notes varchar(255)
+  created_at timestamp [default: `now()`]
+}
+
+Table product_groups {
+  id int [pk, increment]
+  name varchar(255) [not null]
+  icon varchar(100)
+}
+
 Table products {
-  id integer [primary key, increment]
+  id int [pk, increment]
+  group_id int [ref: > product_groups.id]
   name varchar(255) [not null]
   description text
-  image_url varchar(512) [note: 'optional']
+  image_url varchar(512)
   is_active boolean [default: true]
-  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  created_at timestamp [default: `now()`]
   updated_at timestamp
 
   indexes {
     (name) [name: 'search_product_name']
+    (group_id) [name: 'by_group']
   }
 }
 
 Table product_variations {
-  id integer [primary key, increment]
-  product_id integer [not null, ref: > products.id]
-  name varchar(255) [not null, note: 'Ex: 500ml, Sabor Laranja']
+  id int [pk, increment]
+  product_id int [ref: > products.id]
+  name varchar(255) [not null] // Ex: "500ml", "Sabor Laranja"
   price decimal(10,2) [not null]
-  stock integer [note: 'optional stock control']
-  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  stock int
+  created_at timestamp [default: `now()`]
   updated_at timestamp
 
   indexes {
@@ -43,19 +61,43 @@ Table product_variations {
   }
 }
 
-Table sale {
-  id integer [primary key, increment]
-  order_id integer [not null]
-  customer_id integer [note: 'opcional']
-  user_id integer [not null, ref: > users.id]
+Table orders {
+  id int [pk, increment]
+  table_number varchar(20)
+  notes text
+  status varchar(20) [not null, note: 'open/closed/canceled']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Table sales {
+  id int [pk, increment]
+  order_id int [ref: > orders.id]
+  customer_id int [ref: > customers.id]
+  user_id int [ref: > users.id]
   total_amount decimal(10,2) [not null]
   payment_method varchar(50) [not null, note: 'cash/card/pix']
   status varchar(20) [not null, note: 'paid/pending']
-  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  created_at timestamp [default: `now()`]
   updated_at timestamp
 
   indexes {
     (created_at) [name: 'sale_by_date']
     (user_id) [name: 'sale_by_user']
+  }
+}
+
+Table sale_items {
+  id int [pk, increment]
+  sale_id int [ref: > sales.id]
+  product_id int [ref: > products.id]
+  variation_id int [ref: > product_variations.id]
+  quantity int [not null]
+  unit_price decimal(10,2) [not null] // Snapshot do preço
+  subtotal decimal(10,2) [not null]
+
+  indexes {
+    (sale_id) [name: 'by_sale']
+    (product_id) [name: 'by_product']
   }
 }
