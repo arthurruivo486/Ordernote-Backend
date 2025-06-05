@@ -1,4 +1,4 @@
-Table users {
+Table user {
   id int [pk, increment]
   name varchar(255) [not null]
   email varchar(255) [not null, unique]
@@ -74,7 +74,7 @@ Table sales {
   id int [pk, increment]
   order_id int [ref: > orders.id]
   customer_id int [ref: > customers.id]
-  user_id int [ref: > users.id]
+  user_id int [ref: > user.id]
   total_amount decimal(10,2) [not null]
   payment_method varchar(50) [not null, note: 'cash/card/pix']
   status varchar(20) [not null, note: 'paid/pending']
