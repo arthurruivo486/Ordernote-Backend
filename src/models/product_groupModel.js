@@ -1,4 +1,4 @@
-import database from '../../db/connetion.js';
+import database from '../../db/connection.js';
 
 export async function findAll() {
     try {

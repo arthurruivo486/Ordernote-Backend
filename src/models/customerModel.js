@@ -1,4 +1,4 @@
-import database from "../../db/connetion.js";
+import database from "../../db/connection.js";
 
 export function createCustomer({ name, phone, address_street, address_number, address_notes }) {
   const query = `
