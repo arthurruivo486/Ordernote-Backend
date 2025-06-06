@@ -1,4 +1,4 @@
-import { findAll, create, remove, update} from "../models/productVariationModel.js";
+import { findAll, create, remove, update} from "../models/product_variationModel.js";
 import { z } from "zod"
 
 const productVariationSchema = z.object({
