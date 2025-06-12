@@ -2,7 +2,7 @@ import { findAll, create, remove, update } from "../models/saleModel.js";
 import { z } from "zod";
 
 
-export const saleUpdateSchema = z.object({
+export const saleSchema = z.object({
   order_id: z.number().optional(),
   customer_id: z.number().nullable().optional(),
   user_id: z.number().optional(),
@@ -49,7 +49,7 @@ export const deleteSale = async (req, res) => {
 export const updateSale = async (req, res) => {
   try {
     const { id } = req.params;
-    const saleData = saleUpdateSchema.parse(req.body); // usa o schema com todos opcionais
+    const saleData = saleSchema.parse(req.body); // usa o schema com todos opcionais
     const result = await update(id, saleData);
     if (result.changes === 0) {
       return res.status(404).json({ message: "Sale not found" });
