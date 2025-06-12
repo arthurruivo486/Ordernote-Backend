@@ -8,8 +8,9 @@ import customerRouter from './customerRouter.js';
 import prouctGroupRouter from './product_groupRouter.js'
 import productVariationRouter from './product_variationRoutes.js';
 import saleItemRoutes from './sale_itemRoutes.js';
+import orderRoutes from './orderRoutes.js';
 
-
+router.use('/', orderRoutes);
 router.use('/', saleItemRoutes);
 router.use('/',productVariationRouter)
 router.use('/',prouctGroupRouter);
