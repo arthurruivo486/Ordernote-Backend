@@ -4,7 +4,6 @@ import { z } from "zod";
 const saleItemSchema = z.object({
     sale_id: z.number().int(),
     product_id: z.number().int(),
-    variation_id: z.number().int(),
     quantity: z.number().int().min(1),
     unit_price: z.number().nonnegative(),
     subtotal: z.number().nonnegative()
@@ -24,7 +23,7 @@ export const createSaleItem = async (req, res) => {
     try {
         const itemData = saleItemSchema.parse(req.body);
         const result = await create(itemData);
-        res.status(201).json({ message: "Sale item created", id: result.lastInsertRowid });
+        res.status(201).json({ message: "Sale item created" });
     } catch (error) {
         console.log(error);
         res.status(400).json({ message: error.message });
@@ -33,8 +32,8 @@ export const createSaleItem = async (req, res) => {
 
 export const deleteSaleItem = async (req, res) => {
     try {
-        const { id } = req.params;
-        const result = await remove(id);
+        const { sale_id, product_id } = req.params;
+        const result = await remove(sale_id, product_id);
         if (result.changes === 0) {
             return res.status(404).json({ message: "Sale item not found" });
         }
@@ -47,9 +46,9 @@ export const deleteSaleItem = async (req, res) => {
 
 export const updateSaleItem = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { sale_id, product_id } = req.params;
         const itemData = saleItemSchema.parse(req.body);
-        const result = await update(id, itemData);
+        const result = await update(sale_id, product_id, itemData);
         if (result.changes === 0) {
             return res.status(404).json({ message: "Sale item not found" });
         }

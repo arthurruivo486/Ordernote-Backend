@@ -2,10 +2,14 @@ import { findAll, create, remove, update} from "../models/productModel.js";
 import { z } from "zod"
 
 const productSchema = z.object({
-    name: z.string().min(1, "nome do usuario é obrigatório"),
-    description: z.string().min(1, "descrição do produto é obrigatória"),
-    image_url: z.string().url("URL inválida").optional(),
+  name: z.string().min(1, "Nome do produto é obrigatório"),
+  description: z.string().min(1, "Descrição é obrigatória"),
+  image_url: z.string().url("URL inválida").optional(),
+  price: z.number().min(0, "Preço deve ser maior ou igual a 0"),
+  stock: z.number().int().min(0, "Estoque deve ser 0 ou mais"),
+  group_id: z.number().int().optional(), // se for obrigatório, remova o .optional()
 });
+
 
 export const getProducts = async (req, res) =>{
     try {

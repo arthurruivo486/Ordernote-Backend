@@ -15,14 +15,13 @@ export async function create(item) {
     try {
         const query = `
             INSERT INTO sale_items (
-                sale_id, product_id, variation_id, quantity, unit_price, subtotal
-            ) VALUES (?, ?, ?, ?, ?, ?);
+                sale_id, product_id, quantity, unit_price, subtotal
+            ) VALUES (?, ?, ?, ?, ?);
         `;
         const statement = database.prepare(query);
         return statement.run(
             item.sale_id,
             item.product_id,
-            item.variation_id,
             item.quantity,
             item.unit_price,
             item.subtotal
@@ -33,32 +32,30 @@ export async function create(item) {
     }
 }
 
-export async function remove(id) {
+export async function remove(sale_id, product_id) {
     try {
-        const statement = database.prepare("DELETE FROM sale_items WHERE id = ?;");
-        return statement.run(id);
+        const statement = database.prepare("DELETE FROM sale_items WHERE sale_id = ? AND product_id = ?;");
+        return statement.run(sale_id, product_id);
     } catch (error) {
         console.log(error);
         throw new Error("Error deleting sale_item: " + error.message);
     }
 }
 
-export async function update(id, item) {
+export async function update(sale_id, product_id, item) {
     try {
         const query = `
             UPDATE sale_items 
-            SET sale_id = ?, product_id = ?, variation_id = ?, quantity = ?, unit_price = ?, subtotal = ?
-            WHERE id = ?;
+            SET quantity = ?, unit_price = ?, subtotal = ?
+            WHERE sale_id = ? AND product_id = ?;
         `;
         const statement = database.prepare(query);
         return statement.run(
-            item.sale_id,
-            item.product_id,
-            item.variation_id,
             item.quantity,
             item.unit_price,
             item.subtotal,
-            id
+            sale_id,
+            product_id
         );
     } catch (error) {
         console.log(error);
