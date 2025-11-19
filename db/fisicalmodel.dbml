@@ -5,7 +5,7 @@ Table user {
   password_hash varchar(255) [not null]
   role varchar(50) [default: 'seller', note: 'admin/seller']
   status boolean [default: true]
-  created_at timestamp [default: `now()`]
+  created_at timestamp [default: 'CURRENT_TIMESTAMP']
   updated_at timestamp
 
   indexes {
@@ -17,28 +17,36 @@ Table user {
 
 Table customers {
   id int [pk, increment]
+  user_id int [ref: > user.id]   // ← dono do cliente
   name varchar(255) [not null]
   phone varchar(20)
   address_street varchar(255)
   address_number varchar(20)
   address_notes varchar(255)
-  created_at timestamp [default: `now()`]
+  created_at timestamp [default: 'CURRENT_TIMESTAMP']
 }
 
 Table product_groups {
   id int [pk, increment]
+  user_id int [ref: > user.id]   // ← dono do grupo
   name varchar(255) [not null]
   icon varchar(100)
 }
 
 Table products {
   id int [pk, increment]
-  group_id int [ref: > product_groups.id]
+  user_id int [ref: > user.id]   // ← dono do produto
+
+  group_id int [ref: > product_groups.id, on_delete: set null]
   name varchar(255) [not null]
   description text
   image_url varchar(512)
   is_active boolean [default: true]
-  created_at timestamp [default: `now()`]
+
+  price decimal(10,2) [not null, default: 0]
+  stock int [default: 0]
+
+  created_at timestamp [default: 'CURRENT_TIMESTAMP']
   updated_at timestamp
 
   indexes {
@@ -47,26 +55,14 @@ Table products {
   }
 }
 
-Table product_variations {
-  id int [pk, increment]
-  product_id int [ref: > products.id]
-  name varchar(255) [not null] // Ex: "500ml", "Sabor Laranja"
-  price decimal(10,2) [not null]
-  stock int
-  created_at timestamp [default: `now()`]
-  updated_at timestamp
-
-  indexes {
-    (product_id) [name: 'by_product']
-  }
-}
-
 Table orders {
   id int [pk, increment]
+  user_id int [ref: > user.id]   // ← dono do pedido
+
   table_number varchar(20)
   notes text
   status varchar(20) [not null, note: 'open/closed/canceled']
-  created_at timestamp [default: `now()`]
+  created_at timestamp [default: 'CURRENT_TIMESTAMP']
   updated_at timestamp
 }
 
@@ -75,10 +71,12 @@ Table sales {
   order_id int [ref: > orders.id]
   customer_id int [ref: > customers.id]
   user_id int [ref: > user.id]
+
   total_amount decimal(10,2) [not null]
   payment_method varchar(50) [not null, note: 'cash/card/pix']
   status varchar(20) [not null, note: 'paid/pending']
-  created_at timestamp [default: `now()`]
+
+  created_at timestamp [default: 'CURRENT_TIMESTAMP']
   updated_at timestamp
 
   indexes {
@@ -88,16 +86,17 @@ Table sales {
 }
 
 Table sale_items {
-  id int [pk, increment]
   sale_id int [ref: > sales.id]
   product_id int [ref: > products.id]
-  variation_id int [ref: > product_variations.id]
+
   quantity int [not null]
-  unit_price decimal(10,2) [not null] // Snapshot do preço
+  unit_price decimal(10,2) [not null]
   subtotal decimal(10,2) [not null]
 
   indexes {
     (sale_id) [name: 'by_sale']
     (product_id) [name: 'by_product']
   }
+
+  primary key (sale_id, product_id)
 }
