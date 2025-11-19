@@ -24,6 +24,7 @@
   "homepage": "https://github.com/arthurruivo486/Ordernote-Backend#readme",
   "description": "",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "better-sqlite3": "^11.10.0",
     "express": "^5.1.0",
     "knex": "^3.1.0",

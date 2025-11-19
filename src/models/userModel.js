@@ -5,11 +5,10 @@ export async function findAll() {
         const query = "SELECT id, name, email, password_hash from users;";
         const statement = database.prepare(query);
         const users = statement.all();
-        //statement.finalize();
         return users;
     } catch (error) {
         console.log(error);
-        throw new Error("Error fetching users: " + error.message)
+        throw new Error("Error fetching users: " + error.message);
     } 
 }
 
@@ -49,8 +48,6 @@ export async function update(id, userData) {
     }
 }
 
-
-
 export async function updateRole(id, role) {
     try {
         const query = "UPDATE users SET role=? WHERE id = ?;";
@@ -60,5 +57,18 @@ export async function updateRole(id, role) {
     } catch (error) {
         console.log(error);
         throw new Error("Error updating user:" + error.message);
+    }
+}
+
+// 🚀 Função que faltava para o login funcionar
+export function getUserByEmail(email) {
+    try {
+        const query = "SELECT * FROM users WHERE email = ?;";
+        const statement = database.prepare(query);
+        const user = statement.get(email);
+        return user;
+    } catch (error) {
+        console.log(error);
+        throw new Error("Error fetching user by email: " + error.message);
     }
 }
