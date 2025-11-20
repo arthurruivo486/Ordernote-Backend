@@ -37,7 +37,7 @@ Table products {
   id int [pk, increment]
   user_id int [ref: > user.id]   // ← dono do produto
 
-  group_id int [ref: > product_groups.id, on_delete: set null]
+  group_id int [ref: > product_groups.id]
   name varchar(255) [not null]
   description text
   image_url varchar(512)
@@ -57,7 +57,7 @@ Table products {
 
 Table orders {
   id int [pk, increment]
-  user_id int [ref: > user.id]   // ← dono do pedido
+  user_id int [ref: > user.id]  
 
   table_number varchar(20)
   notes text
@@ -100,3 +100,4 @@ Table sale_items {
 
   primary key (sale_id, product_id)
 }
+
