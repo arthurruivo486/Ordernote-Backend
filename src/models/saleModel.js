@@ -1,10 +1,19 @@
 import database from "../../db/connection.js";
 
-export async function findAll() {
+export async function findAll(userId = null) {
     try {
-        const query = "SELECT * FROM sales;";
+        let query = "SELECT * FROM sales";
+        let params = [];
+        
+        if (userId) {
+            query += " WHERE user_id = ?";
+            params.push(userId);
+        }
+        
+        query += " ORDER BY created_at DESC";
+        
         const statement = database.prepare(query);
-        const sales = statement.all();
+        const sales = statement.all(...params);
         return sales;
     } catch (error) {
         console.log(error);
@@ -34,6 +43,7 @@ export async function create(saleData) {
     }
 }
 
+// ✅ ADICIONE ESTA FUNÇÃO QUE ESTAVA FALTANDO
 export async function remove(id) {
     try {
         const query = "DELETE FROM sales WHERE id = ?;";
@@ -46,11 +56,13 @@ export async function remove(id) {
     }
 }
 
+// ✅ ADICIONE TAMBÉM A FUNÇÃO update SE NECESSÁRIO
 export async function update(id, saleData) {
     try {
         const query = `
             UPDATE sales 
-            SET order_id = ?, customer_id = ?, user_id = ?, total_amount = ?, payment_method = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+            SET order_id = ?, customer_id = ?, user_id = ?, total_amount = ?, 
+                payment_method = ?, status = ?, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?;
         `;
         const statement = database.prepare(query);

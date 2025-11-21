@@ -1,62 +1,78 @@
-import { findAll, create, remove, update } from "../models/saleModel.js";
-import { z } from "zod";
-
-
-export const saleSchema = z.object({
-  order_id: z.number().optional(),
-  customer_id: z.number().nullable().optional(),
-  user_id: z.number().optional(),
-  total_amount: z.number().optional(),
-  payment_method: z.enum(["cash", "credit_card", "debit_card", "pix"]).optional(),
-  status: z.enum(["pending", "paid", "cancelled"]).optional()
-});
-
-export const getSales = async (req, res) => {
-    try {
-        const sales = await findAll();
-        res.status(200).json({ sales });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal Server Error - Controller" });
-    }
-};
+import { create, findAll, update, remove } from "../models/saleModel.js";
 
 export const createSale = async (req, res) => {
     try {
-        const saleData = saleSchema.parse(req.body);
+        // O user_id agora vem do middleware de autenticação
+        const saleData = {
+            ...req.body,
+            user_id: req.user.id // ← Aqui usamos o ID do usuário autenticado
+        };
+
+        console.log("📦 Criando venda para usuário:", req.user.id);
+        console.log("📋 Dados da venda:", saleData);
+
         const result = await create(saleData);
-        res.status(201).json({ message: "Sale created successfully", saleId: result.lastInsertRowid });
+        
+        res.status(201).json({ 
+            message: "Venda criada com sucesso", 
+            saleId: result.lastInsertRowid 
+        });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal Server Error - Controller" });
+        console.log("❌ Erro ao criar venda:", error);
+        res.status(500).json({ message: "Erro interno ao criar venda" });
+    }
+};
+
+export const getSales = async (req, res) => {
+    try {
+        // Filtrar vendas apenas do usuário logado
+        const sales = await findAll(req.user.id);
+        
+        res.status(200).json({ 
+            message: "Vendas carregadas com sucesso",
+            sales 
+        });
+    } catch (error) {
+        console.log("❌ Erro ao buscar vendas:", error);
+        res.status(500).json({ message: "Erro interno ao buscar vendas" });
+    }
+};
+
+// ✅ ADICIONE ESTAS FUNÇÕES QUE ESTAVAM FALTANDO
+export const updateSale = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const saleData = {
+            ...req.body,
+            user_id: req.user.id // Garantir que o user_id seja do usuário logado
+        };
+
+        const result = await update(id, saleData);
+        
+        if (result.changes === 0) {
+            return res.status(404).json({ message: "Venda não encontrada" });
+        }
+
+        res.status(200).json({ message: "Venda atualizada com sucesso" });
+    } catch (error) {
+        console.log("❌ Erro ao atualizar venda:", error);
+        res.status(500).json({ message: "Erro interno ao atualizar venda" });
     }
 };
 
 export const deleteSale = async (req, res) => {
     try {
         const { id } = req.params;
-        const result = await remove(id);
-        if (result.changes === 0) {
-            return res.status(404).json({ message: "Sale not found" });
-        }
-        res.status(200).json({ message: "Sale deleted successfully" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal Server Error - Controller" });
-    }
-};
 
-export const updateSale = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const saleData = saleSchema.parse(req.body); // usa o schema com todos opcionais
-    const result = await update(id, saleData);
-    if (result.changes === 0) {
-      return res.status(404).json({ message: "Sale not found" });
+        const result = await remove(id);
+        
+        if (result.changes === 0) {
+            return res.status(404).json({ message: "Venda não encontrada" });
+        }
+
+        res.status(200).json({ message: "Venda deletada com sucesso" });
+    } catch (error) {
+        console.log("❌ Erro ao deletar venda:", error);
+        res.status(500).json({ message: "Erro interno ao deletar venda" });
     }
-    res.status(200).json({ message: "Sale updated successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: error.errors || "Validation error" });
-  }
 };

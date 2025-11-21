@@ -1,11 +1,15 @@
 import express from 'express';
 const router = express.Router();
 
-import { getSales, createSale, deleteSale, updateSale } from "../controllers/saleController.js";
+import { createSale, getSales, updateSale, deleteSale } from "../controllers/saleController.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
-router.get("/sale", getSales);
-router.post("/sale", createSale);
-router.delete("/sale/:id", deleteSale);
-router.patch("/sale/:id", updateSale);
+// Todas as rotas protegidas pelo middleware
+router.use(authMiddleware);
+
+router.get("/sales", getSales);
+router.post("/sales", createSale);
+router.patch("/sales/:id", updateSale);
+router.delete("/sales/:id", deleteSale);
 
 export default router;

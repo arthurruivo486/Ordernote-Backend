@@ -1,16 +1,20 @@
 import express from 'express';
 const router = express.Router();
 
-import {
-    getOrders,
-    createNewOrder,
-    deleteOrder,
-    updateOrderInfo
+import { 
+    createNewOrder, 
+    getAllOrders, 
+    updateOrderController,  // ← Nome corrigido
+    deleteOrderController   // ← Nome corrigido
 } from "../controllers/orderController.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
-router.get("/order", getOrders);
+// ✅ APLICAR MIDDLEWARE DE AUTENTICAÇÃO EM TODAS AS ROTAS
+router.use(authMiddleware);
+
+router.get("/order", getAllOrders);
 router.post("/order", createNewOrder);
-router.delete("/order/:id", deleteOrder);
-router.patch("/order/:id", updateOrderInfo);
+router.patch("/order/:id", updateOrderController);  // ← Nome corrigido
+router.delete("/order/:id", deleteOrderController); // ← Nome corrigido
 
 export default router;
