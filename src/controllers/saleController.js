@@ -1,25 +1,55 @@
 import { create, findAll, update, remove } from "../models/saleModel.js";
+import { 
+    create as createSaleItem,
+    findSaleItemsBySaleId
+} from "../models/sale_itemModel.js";
 
 export const createSale = async (req, res) => {
     try {
-        // O user_id agora vem do middleware de autenticação
-        const saleData = {
-            ...req.body,
-            user_id: req.user.id // ← Aqui usamos o ID do usuário autenticado
+        const { items, ...saleData } = req.body;
+
+        // Validar se existem itens na venda
+        if (!items || items.length === 0) {
+            return res.status(400).json({ message: "A venda precisa ter pelo menos um item." });
+        }
+
+        // Preparar dados da venda com user_id do usuário autenticado
+        const completeSaleData = {
+            ...saleData,
+            user_id: req.user.id
         };
 
-        console.log("📦 Criando venda para usuário:", req.user.id);
-        console.log("📋 Dados da venda:", saleData);
+        console.log("🧾 Criando venda para usuário:", req.user.id);
+        console.log("📋 Dados da venda:", completeSaleData);
+        console.log("📦 Itens da venda:", items);
 
-        const result = await create(saleData);
-        
-        res.status(201).json({ 
-            message: "Venda criada com sucesso", 
-            saleId: result.lastInsertRowid 
+        // 1️⃣ Criar venda principal
+        const saleResult = await create(completeSaleData);
+        const saleId = saleResult.lastInsertRowid;
+
+        console.log("🆔 Venda criada ID:", saleId);
+
+        // 2️⃣ Criar itens da venda
+        for (const item of items) {
+            await createSaleItem({
+                sale_id: saleId,
+                product_id: item.product_id,
+                quantity: item.quantity,
+                unit_price: item.unit_price,
+                subtotal: item.subtotal
+            });
+        }
+
+        console.log("✅ Itens da venda criados com sucesso!");
+
+        return res.status(201).json({
+            message: "Venda criada com sucesso",
+            saleId: saleId,
         });
+
     } catch (error) {
         console.log("❌ Erro ao criar venda:", error);
-        res.status(500).json({ message: "Erro interno ao criar venda" });
+        return res.status(500).json({ message: "Erro interno ao criar venda" });
     }
 };
 
@@ -38,7 +68,6 @@ export const getSales = async (req, res) => {
     }
 };
 
-// ✅ ADICIONE ESTAS FUNÇÕES QUE ESTAVAM FALTANDO
 export const updateSale = async (req, res) => {
     try {
         const { id } = req.params;
@@ -74,5 +103,16 @@ export const deleteSale = async (req, res) => {
     } catch (error) {
         console.log("❌ Erro ao deletar venda:", error);
         res.status(500).json({ message: "Erro interno ao deletar venda" });
+    }
+};
+export const getItemsBySaleId = async (req, res) => {
+    const { sale_id } = req.params;
+
+    try {
+        const items = await findSaleItemsBySaleId(sale_id);
+        return res.status(200).json({ items });
+    } catch (error) {
+        console.log("❌ Erro ao buscar itens da venda:", error);
+        return res.status(500).json({ message: "Erro ao buscar itens da venda" });
     }
 };

@@ -12,25 +12,19 @@ export async function findAll() {
 }
 
 export async function create(item) {
-    try {
-        const query = `
-            INSERT INTO sale_items (
-                sale_id, product_id, quantity, unit_price, subtotal
-            ) VALUES (?, ?, ?, ?, ?);
-        `;
-        const statement = database.prepare(query);
-        return statement.run(
-            item.sale_id,
-            item.product_id,
-            item.quantity,
-            item.unit_price,
-            item.subtotal
-        );
-    } catch (error) {
-        console.log(error);
-        throw new Error("Error creating sale_item: " + error.message);
-    }
+    const statement = database.prepare(`
+        INSERT INTO sale_items (sale_id, product_id, quantity, unit_price, subtotal)
+        VALUES (?, ?, ?, ?, ?)
+    `);
+    return statement.run(
+        item.sale_id,
+        item.product_id,
+        item.quantity,
+        item.unit_price,
+        item.subtotal
+    );
 }
+
 
 export async function remove(sale_id, product_id) {
     try {
@@ -60,5 +54,16 @@ export async function update(sale_id, product_id, item) {
     } catch (error) {
         console.log(error);
         throw new Error("Error updating sale_item: " + error.message);
+    }
+}
+export async function findSaleItemsBySaleId(sale_id) {
+    try {
+        const statement = database.prepare(
+            "SELECT * FROM sale_items WHERE sale_id = ?"
+        );
+        return statement.all(sale_id);
+    } catch (error) {
+        console.log(error);
+        throw new Error("Error fetching items by sale_id: " + error.message);
     }
 }
