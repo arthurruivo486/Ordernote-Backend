@@ -59,23 +59,35 @@ export async function remove(id) {
 // ✅ ADICIONE TAMBÉM A FUNÇÃO update SE NECESSÁRIO
 export async function update(id, saleData) {
     try {
+        // Monta dinamicamente os campos que serão atualizados
+        const columns = [];
+        const values = [];
+
+        for (const key in saleData) {
+            if (saleData[key] !== undefined) {
+                columns.push(`${key} = ?`);
+                values.push(saleData[key]);
+            }
+        }
+
+        // Atualiza o updated_at sempre
+        columns.push(`updated_at = CURRENT_TIMESTAMP`);
+
+        if (columns.length === 0) {
+            throw new Error("No valid fields to update");
+        }
+
         const query = `
-            UPDATE sales 
-            SET order_id = ?, customer_id = ?, user_id = ?, total_amount = ?, 
-                payment_method = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+            UPDATE sales
+            SET ${columns.join(", ")}
             WHERE id = ?;
         `;
+
         const statement = database.prepare(query);
-        const result = statement.run(
-            saleData.order_id,
-            saleData.customer_id ?? null,
-            saleData.user_id,
-            saleData.total_amount,
-            saleData.payment_method,
-            saleData.status,
-            id
-        );
+
+        const result = statement.run(...values, id);
         return result;
+
     } catch (error) {
         console.log(error);
         throw new Error("Error updating sale: " + error.message);
