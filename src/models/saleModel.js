@@ -24,18 +24,31 @@ export async function findAll(userId = null) {
 export async function create(saleData) {
     try {
         const query = `
-            INSERT INTO sales (order_id, customer_id, user_id, total_amount, payment_method, status)
-            VALUES (?, ?, ?, ?, ?, ?);
+            INSERT INTO sales (
+                order_id, 
+                customer_id, 
+                user_id, 
+                total_amount, 
+                payment_method, 
+                status,
+                sale_type,
+                table_number
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
         `;
+
         const statement = database.prepare(query);
+
         const result = statement.run(
             saleData.order_id,
             saleData.customer_id ?? null,
             saleData.user_id,
             saleData.total_amount,
             saleData.payment_method,
-            saleData.status
+            saleData.status,
+            saleData.sale_type,
+            saleData.table_number ?? null
         );
+
         return result;
     } catch (error) {
         console.log(error);
