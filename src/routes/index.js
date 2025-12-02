@@ -9,7 +9,9 @@ import prouctGroupRouter from './product_groupRouter.js'
 import saleItemRoutes from './sale_itemRoutes.js';
 import orderRoutes from './orderRoutes.js';
 import loginRoutes from "./loginRoutes.js";
+import productVariationRoutes from './productVariationRoutes.js'
 
+router.use('/',productVariationRoutes )
 router.use('/', loginRoutes);
 router.use('/', orderRoutes);
 router.use('/', saleItemRoutes);
